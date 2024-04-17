@@ -313,6 +313,8 @@ import static gregtech.api.enums.MetaTileEntityIDs.PUMP_HV;
 import static gregtech.api.enums.MetaTileEntityIDs.PUMP_IV;
 import static gregtech.api.enums.MetaTileEntityIDs.PUMP_LV;
 import static gregtech.api.enums.MetaTileEntityIDs.PUMP_MV;
+import static gregtech.api.enums.MetaTileEntityIDs.PURIFICATION_PLANT_CONTROLLER;
+import static gregtech.api.enums.MetaTileEntityIDs.PURIFICATION_UNIT_SIFTER;
 import static gregtech.api.enums.MetaTileEntityIDs.PYROLYSE_OVEN_CONTROLLER;
 import static gregtech.api.enums.MetaTileEntityIDs.QUADRUPLE_INPUT_HATCHES_EV;
 import static gregtech.api.enums.MetaTileEntityIDs.QUADRUPLE_INPUT_HATCHES_IV;
@@ -581,6 +583,8 @@ import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_Transcenden
 import gregtech.common.tileentities.machines.multi.GT_MetaTileEntity_VacuumFreezer;
 import gregtech.common.tileentities.machines.multi.drone.GT_MetaTileEntity_DroneCentre;
 import gregtech.common.tileentities.machines.multi.drone.GT_MetaTileEntity_Hatch_DroneDownLink;
+import gregtech.common.tileentities.machines.multi.purification.GT_MetaTileEntity_PurificationPlant;
+import gregtech.common.tileentities.machines.multi.purification.GT_MetaTileEntity_PurificationUnitSifter;
 import gregtech.common.tileentities.machines.steam.GT_MetaTileEntity_AlloySmelter_Bronze;
 import gregtech.common.tileentities.machines.steam.GT_MetaTileEntity_AlloySmelter_Steel;
 import gregtech.common.tileentities.machines.steam.GT_MetaTileEntity_Compressor_Bronze;
@@ -842,7 +846,16 @@ public class GT_Loader_MetaTileEntities implements Runnable { // TODO CHECK CIRC
                 DTPF_CONTROLLER.ID,
                 "multimachine.plasmaforge",
                 "Dimensionally Transcendent Plasma Forge").getStackForm(1L));
-
+        ItemList.Machine_Multi_PurificationPlant.set(
+            new GT_MetaTileEntity_PurificationPlant(
+                PURIFICATION_PLANT_CONTROLLER.ID,
+                "multimachine.purificationplant",
+                "Water Purification Plant").getStackForm(1L));
+        ItemList.Machine_Multi_PurificationUnitSifter.set(
+            new GT_MetaTileEntity_PurificationUnitSifter(
+                PURIFICATION_UNIT_SIFTER.ID,
+                "multimachine.purificationunitsifter",
+                "Sifter Purification Unit").getStackForm(1L));
         ItemList.Machine_Multi_LargeBoiler_Bronze.set(
             new GT_MetaTileEntity_LargeBoiler_Bronze(
                 LARGE_BRONZE_BOILER_CONTROLLER.ID,
