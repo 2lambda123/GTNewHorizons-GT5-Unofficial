@@ -619,9 +619,11 @@ public class GT_MetaTileEntity_BasicMachine_GT_Recipe extends GT_MetaTileEntity_
                     // uv;
                     // assemblers
                     // luv-uev
-                    if (GT_Utility.isStackValid(aStack)) for (int oreID : OreDictionary.getOreIDs(aStack)) {
+                    if (GT_Utility.isStackValid(aStack)) {
+                        for (int oreID : OreDictionary.getOreIDs(aStack)) {
                         if (OreDictionary.getOreName(oreID)
                             .startsWith("circuit")) return true;
+                    }
                     }
                 }
                 return this.getRecipeMap()

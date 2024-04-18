@@ -285,7 +285,9 @@ public class GT_MetaTileEntity_AdvSeismicProspector extends GT_MetaTileEntity_Ba
                 Materials tMaterial = GregTech_API.sGeneratedMaterials[((GT_TileEntity_Ores) tTileEntity).mMetaData
                     % 1000];
 
-                if ((tMaterial != null) && (tMaterial != Materials._NULL)) return tMaterial.mDefaultLocalName;
+                if ((tMaterial != null) && (tMaterial != Materials._NULL)) {
+                    return tMaterial.mDefaultLocalName;
+                }
             }
         } else {
             int tMetaID = getBaseMetaTileEntity().getWorld()

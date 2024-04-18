@@ -4581,7 +4581,9 @@ public class GT_MetaGenerated_Item_01 extends GT_MetaGenerated_Item_X32 {
             for (GT_Recipe recipe : fusionRecipes) { // Loop through fusion recipes
                 if (recipe.getFluidOutput(0) != null) { // Make sure fluid output can't be null (not sure if possible)
                     if (recipe.getFluidOutput(0)
-                        .isFluidEqual(aMaterial.getPlasma(1L))) return true; // Fusion recipe
+                        .isFluidEqual(aMaterial.getPlasma(1L))) {
+                            return true;
+                        } // Fusion recipe
                                                                              // output matches
                                                                              // current plasma
                                                                              // cell fluid
