@@ -1,15 +1,5 @@
 package gregtech.common.render;
 
-import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.RenderBlocks;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.world.IBlockAccess;
-import net.minecraftforge.common.util.ForgeDirection;
-
-import org.lwjgl.opengl.GL11;
-
 import cpw.mods.fml.client.registry.ISimpleBlockRenderingHandler;
 import cpw.mods.fml.client.registry.RenderingRegistry;
 import gregtech.GT_Mod;
@@ -20,36 +10,47 @@ import gregtech.api.multitileentity.MultiTileEntityBlock;
 import gregtech.api.multitileentity.MultiTileEntityRegistry;
 import gregtech.api.multitileentity.interfaces.IMultiBlockController;
 import gregtech.api.multitileentity.multiblock.base.MultiBlockPart;
+import net.minecraft.block.Block;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.RenderBlocks;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.world.IBlockAccess;
+import net.minecraftforge.common.util.ForgeDirection;
+import org.lwjgl.opengl.GL11;
 
 public class GT_MultiTile_Renderer implements ISimpleBlockRenderingHandler {
 
-    private final int renderID;
-    public static GT_MultiTile_Renderer INSTANCE;
+  private final int renderID;
+  public static GT_MultiTile_Renderer INSTANCE;
 
-    public GT_MultiTile_Renderer() {
-        this.renderID = RenderingRegistry.getNextAvailableRenderId();
-        INSTANCE = this;
-        RenderingRegistry.registerBlockHandler(this);
+  public GT_MultiTile_Renderer() {
+    this.renderID = RenderingRegistry.getNextAvailableRenderId();
+    INSTANCE = this;
+    RenderingRegistry.registerBlockHandler(this);
+  }
+
+  @Override
+  public void renderInventoryBlock(Block block, int metadata, int modelId,
+                                   RenderBlocks renderer) {
+    if (!(block instanceof MultiTileEntityBlock mteBlock)) {
+      return;
     }
 
-    @Override
-    public void renderInventoryBlock(Block block, int metadata, int modelId, RenderBlocks renderer) {
-        if (!(block instanceof MultiTileEntityBlock mteBlock)) {
-            return;
-        }
+    GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
+    GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
 
-        GL11.glRotatef(90.0F, 0.0F, 1.0F, 0.0F);
-        GL11.glTranslatef(-0.5F, -0.5F, -0.5F);
+    MultiTileEntityRegistry registry = mteBlock.getRegistry();
+    if (registry == null)
+      return;
+    renderer.setRenderBoundsFromBlock(mteBlock);
 
-        MultiTileEntityRegistry registry = mteBlock.getRegistry();
-        if (registry == null) return;
-        renderer.setRenderBoundsFromBlock(mteBlock);
-
-        for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-            ITexture texture = registry.getCachedTileEntity(metadata)
-                .getTexture(side);
-            if (texture == null) continue;
-            switch (side) {
+    for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
+      ITexture texture =
+          registry.getCachedTileEntity(metadata).getTexture(side);
+      if (texture == null)
+        continue;
+      switch (side) {
                 case DOWN -> renderYNegative(null, renderer, 0, 0, 0, block, texture, side);
                 case UP -> renderYPositive(null, renderer, 0, 0, 0, block, texture, side);
                 case WEST -> renderXNegative(null, renderer, 0, 0, 0, block, texture, side);
@@ -95,9 +96,10 @@ public class GT_MultiTile_Renderer implements ISimpleBlockRenderingHandler {
         MultiTileBasicRender renderedEntity = (MultiTileBasicRender) entity;
 
         for (ForgeDirection side : ForgeDirection.VALID_DIRECTIONS) {
-            ITexture texture = renderedEntity.getTexture(side);
-            if (texture == null) continue;
-            switch (side) {
+                    ITexture texture = renderedEntity.getTexture(side);
+                    if (texture == null)
+                      continue;
+                    switch (side) {
                 case DOWN -> renderYNegative(world, renderer, x, y, z, block, texture, side);
                 case UP -> renderYPositive(world, renderer, x, y, z, block, texture, side);
                 case WEST -> renderXNegative(world, renderer, x, y, z, block, texture, side);

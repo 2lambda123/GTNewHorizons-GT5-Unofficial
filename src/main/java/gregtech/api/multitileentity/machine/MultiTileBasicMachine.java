@@ -3,30 +3,10 @@ package gregtech.api.multitileentity.machine;
 import static gregtech.api.enums.GT_Values.*;
 import static gregtech.api.enums.TickTime.MINUTE;
 
-import java.io.IOException;
-import java.util.Objects;
-
-import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntityFurnace;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.StatCollector;
-import net.minecraftforge.common.util.ForgeDirection;
-import net.minecraftforge.fluids.FluidStack;
-
-import org.jetbrains.annotations.ApiStatus.OverrideOnly;
-
 import com.gtnewhorizons.modularui.api.UIInfos;
 import com.gtnewhorizons.modularui.api.forge.IItemHandlerModifiable;
 import com.gtnewhorizons.modularui.api.forge.ItemStackHandler;
 import com.gtnewhorizons.modularui.api.screen.UIBuildContext;
-
 import cpw.mods.fml.relauncher.Side;
 import cpw.mods.fml.relauncher.SideOnly;
 import gregtech.api.enums.GT_Values;
@@ -57,177 +37,193 @@ import gregtech.api.task.tasks.ProcessingTask;
 import gregtech.api.util.GT_Utility;
 import gregtech.client.GT_SoundLoop;
 import gregtech.common.gui.MachineGUIProvider;
+import java.io.IOException;
+import java.util.Objects;
+import javax.annotation.Nonnull;
+import javax.annotation.Nullable;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntityFurnace;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.StatCollector;
+import net.minecraftforge.common.util.ForgeDirection;
+import net.minecraftforge.fluids.FluidStack;
+import org.jetbrains.annotations.ApiStatus.OverrideOnly;
 
-public abstract class MultiTileBasicMachine<P extends MuTEProcessingLogic<P>> extends TickableMultiTileEntity
-    implements IMultiTileMachine, ProcessingLogicHost<P>, PowerLogicHost, GUIHost {
+public abstract class MultiTileBasicMachine<P extends MuTEProcessingLogic<P>>
+    extends TickableMultiTileEntity
+    implements IMultiTileMachine, ProcessingLogicHost<P>, PowerLogicHost,
+               GUIHost {
 
-    protected static final int ACTIVE = B[0];
-    protected static final int TICKS_BETWEEN_RECIPE_CHECKS = 5 * TickTime.SECOND;
-    protected static final int POLLUTION_TICK = TickTime.SECOND;
-    protected static final byte INTERRUPT_SOUND_INDEX = 8;
-    protected static final byte PROCESS_START_SOUND_INDEX = 1;
+  protected static final int ACTIVE = B[0];
+  protected static final int TICKS_BETWEEN_RECIPE_CHECKS = 5 * TickTime.SECOND;
+  protected static final int POLLUTION_TICK = TickTime.SECOND;
+  protected static final byte INTERRUPT_SOUND_INDEX = 8;
+  protected static final byte PROCESS_START_SOUND_INDEX = 1;
 
-    protected static final IItemHandlerModifiable EMPTY_INVENTORY = new ItemStackHandler(0);
+  protected static final IItemHandlerModifiable EMPTY_INVENTORY =
+      new ItemStackHandler(0);
 
-    private ITexture activeOverlayTexture = null;
-    private ITexture activeOverlayGlowTexture = null;
-    private ITexture inactiveOverlayTexture = null;
-    private ITexture inactiveOverlayGlowTexture = null;
+  private ITexture activeOverlayTexture = null;
+  private ITexture activeOverlayGlowTexture = null;
+  private ITexture inactiveOverlayTexture = null;
+  private ITexture inactiveOverlayGlowTexture = null;
 
-    protected int maxParallel = 1;
-    protected boolean active = false;
-    protected int tier = 0;
-    protected long burnTime = 0;
-    protected long totalBurnTime = 0;
+  protected int maxParallel = 1;
+  protected boolean active = false;
+  protected int tier = 0;
+  protected long burnTime = 0;
+  protected long totalBurnTime = 0;
 
-    protected boolean outputInventoryChanged = false;
-    protected boolean powerShutDown = false;
-    protected boolean wasEnabled = false;
-    protected boolean canWork = true;
-    protected boolean isElectric = true;
-    protected boolean isSteam = false;
-    protected boolean acceptsFuel = false;
+  protected boolean outputInventoryChanged = false;
+  protected boolean powerShutDown = false;
+  protected boolean wasEnabled = false;
+  protected boolean canWork = true;
+  protected boolean isElectric = true;
+  protected boolean isSteam = false;
+  protected boolean acceptsFuel = false;
 
-    protected byte soundEvent = 0;
-    protected int soundEventValue = 0;
-    protected ItemInventoryLogic itemInput;
-    protected ItemInventoryLogic itemOutput;
-    protected FluidInventoryLogic fluidInput;
-    protected FluidInventoryLogic fluidOutput;
+  protected byte soundEvent = 0;
+  protected int soundEventValue = 0;
+  protected ItemInventoryLogic itemInput;
+  protected ItemInventoryLogic itemOutput;
+  protected FluidInventoryLogic fluidInput;
+  protected FluidInventoryLogic fluidOutput;
 
-    protected P processingLogic;
-    @Nonnull
-    protected VoidingMode voidingMode = VoidingMode.VOID_NONE;
-    protected boolean processingUpdate = false;
-    @Nonnull
-    protected PowerLogic power = createPowerLogic();
-    @Nonnull
-    protected GUIProvider<?> guiProvider = createGUIProvider();
+  protected P processingLogic;
+  @Nonnull protected VoidingMode voidingMode = VoidingMode.VOID_NONE;
+  protected boolean processingUpdate = false;
+  @Nonnull protected PowerLogic power = createPowerLogic();
+  @Nonnull protected GUIProvider<?> guiProvider = createGUIProvider();
 
-    @SideOnly(Side.CLIENT)
-    protected GT_SoundLoop activitySoundLoop;
+  @SideOnly(Side.CLIENT) protected GT_SoundLoop activitySoundLoop;
 
-    public MultiTileBasicMachine() {
-        new ProcessingTask<>(this);
+  public MultiTileBasicMachine() { new ProcessingTask<>(this); }
+
+  @Override
+  public void writeToNBT(NBTTagCompound nbt) {
+    super.writeToNBT(nbt);
+    if (maxParallel > 0) {
+      nbt.setInteger(NBT.PARALLEL, maxParallel);
     }
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        if (maxParallel > 0) {
-            nbt.setInteger(NBT.PARALLEL, maxParallel);
-        }
-
-        if (active) {
-            nbt.setBoolean(NBT.ACTIVE, active);
-        }
-
-        saveItemLogic(nbt);
-        saveFluidLogic(nbt);
-
-        if (processingLogic != null) {
-            NBTTagCompound processingLogicNBT = processingLogic.saveToNBT();
-            nbt.setTag("processingLogic", processingLogicNBT);
-        }
-
-        nbt.setInteger(NBT.TIER, tier);
-        nbt.setLong(NBT.BURN_TIME_LEFT, burnTime);
-        nbt.setLong(NBT.TOTAL_BURN_TIME, totalBurnTime);
-        nbt.setBoolean(NBT.ALLOWED_WORK, canWork);
-        nbt.setBoolean(NBT.ACTIVE, active);
-        power.saveToNBT(nbt);
+    if (active) {
+      nbt.setBoolean(NBT.ACTIVE, active);
     }
 
-    protected void saveItemLogic(NBTTagCompound nbt) {
-        NBTTagCompound nbtListInput = itemInput.saveToNBT();
-        nbt.setTag(NBT.INV_INPUT_LIST, nbtListInput);
-        NBTTagCompound nbtListOutput = itemOutput.saveToNBT();
-        nbt.setTag(NBT.INV_OUTPUT_LIST, nbtListOutput);
+    saveItemLogic(nbt);
+    saveFluidLogic(nbt);
+
+    if (processingLogic != null) {
+      NBTTagCompound processingLogicNBT = processingLogic.saveToNBT();
+      nbt.setTag("processingLogic", processingLogicNBT);
     }
 
-    protected void saveFluidLogic(NBTTagCompound nbt) {
-        NBTTagCompound fluidInputNBT = fluidInput.saveToNBT();
-        nbt.setTag(NBT.TANK_IN, fluidInputNBT);
-        NBTTagCompound fluidOutputNBT = fluidOutput.saveToNBT();
-        nbt.setTag(NBT.TANK_OUT, fluidOutputNBT);
+    nbt.setInteger(NBT.TIER, tier);
+    nbt.setLong(NBT.BURN_TIME_LEFT, burnTime);
+    nbt.setLong(NBT.TOTAL_BURN_TIME, totalBurnTime);
+    nbt.setBoolean(NBT.ALLOWED_WORK, canWork);
+    nbt.setBoolean(NBT.ACTIVE, active);
+    power.saveToNBT(nbt);
+  }
+
+  protected void saveItemLogic(NBTTagCompound nbt) {
+    NBTTagCompound nbtListInput = itemInput.saveToNBT();
+    nbt.setTag(NBT.INV_INPUT_LIST, nbtListInput);
+    NBTTagCompound nbtListOutput = itemOutput.saveToNBT();
+    nbt.setTag(NBT.INV_OUTPUT_LIST, nbtListOutput);
+  }
+
+  protected void saveFluidLogic(NBTTagCompound nbt) {
+    NBTTagCompound fluidInputNBT = fluidInput.saveToNBT();
+    nbt.setTag(NBT.TANK_IN, fluidInputNBT);
+    NBTTagCompound fluidOutputNBT = fluidOutput.saveToNBT();
+    nbt.setTag(NBT.TANK_OUT, fluidOutputNBT);
+  }
+
+  @Override
+  public void readFromNBT(NBTTagCompound nbt) {
+    super.readFromNBT(nbt);
+    if (nbt.hasKey(NBT.PARALLEL)) {
+      maxParallel = Math.max(1, nbt.getInteger(NBT.PARALLEL));
     }
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        if (nbt.hasKey(NBT.PARALLEL)) {
-            maxParallel = Math.max(1, nbt.getInteger(NBT.PARALLEL));
-        }
-
-        if (nbt.hasKey(NBT.ACTIVE)) {
-            active = nbt.getBoolean(NBT.ACTIVE);
-        }
-
-        loadItemLogic(nbt);
-        loadFluidLogic(nbt);
-
-        if (nbt.hasKey("processingLogic")) {
-            P processingLogic = getProcessingLogic();
-            processingLogic.loadFromNBT(Objects.requireNonNull(nbt.getCompoundTag("processingLogic")));
-        }
-
-        tier = nbt.getInteger(NBT.TIER);
-        burnTime = nbt.getLong(NBT.BURN_TIME_LEFT);
-        totalBurnTime = nbt.getLong(NBT.TOTAL_BURN_TIME);
-        canWork = nbt.getBoolean(NBT.ALLOWED_WORK);
-        active = nbt.getBoolean(NBT.ACTIVE);
-        power.loadFromNBT(nbt);
+    if (nbt.hasKey(NBT.ACTIVE)) {
+      active = nbt.getBoolean(NBT.ACTIVE);
     }
 
-    protected void loadItemLogic(NBTTagCompound nbt) {
-        itemInput = new ItemInventoryLogic(nbt.getInteger(NBT.INV_OUTPUT_SIZE), tier);
-        itemOutput = new ItemInventoryLogic(nbt.getInteger(NBT.INV_OUTPUT_SIZE), tier);
-        if (nbt.hasKey(NBT.INV_INPUT_LIST)) {
-            itemInput.loadFromNBT(nbt.getCompoundTag(NBT.INV_INPUT_LIST));
-        }
-        if (nbt.hasKey(NBT.INV_OUTPUT_LIST)) {
-            itemOutput.loadFromNBT(nbt.getCompoundTag(NBT.INV_OUTPUT_LIST));
-        }
+    loadItemLogic(nbt);
+    loadFluidLogic(nbt);
+
+    if (nbt.hasKey("processingLogic")) {
+      P processingLogic = getProcessingLogic();
+      processingLogic.loadFromNBT(
+          Objects.requireNonNull(nbt.getCompoundTag("processingLogic")));
     }
 
-    protected void loadFluidLogic(NBTTagCompound nbt) {
-        fluidInput = new FluidInventoryLogic(16, 10000, tier);
-        fluidOutput = new FluidInventoryLogic(16, 10000, tier);
-        fluidInput.loadFromNBT(nbt.getCompoundTag(NBT.TANK_IN));
-        fluidOutput.loadFromNBT(nbt.getCompoundTag(NBT.TANK_OUT));
-    }
+    tier = nbt.getInteger(NBT.TIER);
+    burnTime = nbt.getLong(NBT.BURN_TIME_LEFT);
+    totalBurnTime = nbt.getLong(NBT.TOTAL_BURN_TIME);
+    canWork = nbt.getBoolean(NBT.ALLOWED_WORK);
+    active = nbt.getBoolean(NBT.ACTIVE);
+    power.loadFromNBT(nbt);
+  }
 
-    public boolean checkTexture(String modID, String resourcePath) {
-        try {
-            Minecraft.getMinecraft()
-                .getResourceManager()
-                .getResource(new ResourceLocation(modID, resourcePath));
-            return true;
-        } catch (IOException ignored) {
-            return false;
-        }
+  protected void loadItemLogic(NBTTagCompound nbt) {
+    itemInput =
+        new ItemInventoryLogic(nbt.getInteger(NBT.INV_OUTPUT_SIZE), tier);
+    itemOutput =
+        new ItemInventoryLogic(nbt.getInteger(NBT.INV_OUTPUT_SIZE), tier);
+    if (nbt.hasKey(NBT.INV_INPUT_LIST)) {
+      itemInput.loadFromNBT(nbt.getCompoundTag(NBT.INV_INPUT_LIST));
     }
+    if (nbt.hasKey(NBT.INV_OUTPUT_LIST)) {
+      itemOutput.loadFromNBT(nbt.getCompoundTag(NBT.INV_OUTPUT_LIST));
+    }
+  }
 
-    @Override
-    public void loadTextures(String folder) {
-        super.loadTextures(folder);
-        for (StatusTextures textureName : StatusTextures.TEXTURES) {
-            ITexture texture = null;
-            String texturePath = "textures/blocks/multitileentity/" + folder + "/" + textureName.getName() + ".png";
-            if (!checkTexture(Mods.GregTech.ID, texturePath)) {
-                texture = TextureFactory.of(Textures.BlockIcons.VOID);
-            } else {
-                if (textureName.hasGlow()) {
-                    texture = TextureFactory.builder()
-                        .addIcon(new CustomIcon("multitileentity/" + folder + "/" + textureName.getName()))
+  protected void loadFluidLogic(NBTTagCompound nbt) {
+    fluidInput = new FluidInventoryLogic(16, 10000, tier);
+    fluidOutput = new FluidInventoryLogic(16, 10000, tier);
+    fluidInput.loadFromNBT(nbt.getCompoundTag(NBT.TANK_IN));
+    fluidOutput.loadFromNBT(nbt.getCompoundTag(NBT.TANK_OUT));
+  }
+
+  public boolean checkTexture(String modID, String resourcePath) {
+    try {
+      Minecraft.getMinecraft().getResourceManager().getResource(
+          new ResourceLocation(modID, resourcePath));
+      return true;
+    } catch (IOException ignored) {
+      return false;
+    }
+  }
+
+  @Override
+  public void loadTextures(String folder) {
+    super.loadTextures(folder);
+    for (StatusTextures textureName : StatusTextures.TEXTURES) {
+      ITexture texture = null;
+      String texturePath = "textures/blocks/multitileentity/" + folder + "/" +
+                           textureName.getName() + ".png";
+      if (!checkTexture(Mods.GregTech.ID, texturePath)) {
+        texture = TextureFactory.of(Textures.BlockIcons.VOID);
+      } else {
+        if (textureName.hasGlow()) {
+          texture = TextureFactory.builder()
+                        .addIcon(new CustomIcon("multitileentity/" + folder +
+                                                "/" + textureName.getName()))
                         .glow()
                         .build();
-                } else {
-                    texture = TextureFactory
-                        .of(new CustomIcon("multitileentity/" + folder + "/" + textureName.getName()));
-                }
-            }
-            switch (textureName) {
+        } else {
+          texture = TextureFactory.of(new CustomIcon(
+              "multitileentity/" + folder + "/" + textureName.getName()));
+        }
+      }
+      switch (textureName) {
                 case Active -> activeOverlayTexture = texture;
                 case ActiveWithGlow -> activeOverlayGlowTexture = texture;
                 case Inactive -> inactiveOverlayTexture = texture;

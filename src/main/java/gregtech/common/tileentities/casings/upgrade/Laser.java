@@ -5,22 +5,22 @@ import gregtech.api.multitileentity.multiblock.casing.UpgradeCasing;
 
 public class Laser extends UpgradeCasing {
 
-    @Override
-    public String getTileEntityName() {
-        return "gt.multitileentity.multiblock.functional.laser";
-    }
+  @Override
+  public String getTileEntityName() {
+    return "gt.multitileentity.multiblock.functional.laser";
+  }
 
-    @Override
-    protected void customWork(IMultiBlockController target) {
-        target.setLaserSupport(true);
-    }
+  @Override
+  protected void customWork(IMultiBlockController target) {
+    target.setLaserSupport(true);
+  }
 
-    @Override
-    public void onBlockBroken() {
-        final IMultiBlockController controller = getTarget(false);
-        if (controller != null) {
-            controller.setLaserSupport(false);
-        }
-        super.onBlockBroken();
+  @Override
+  public void onBlockBroken() {
+    final IMultiBlockController controller = getTarget(false);
+    if (controller != null) {
+      controller.setLaserSupport(false);
     }
+    super.onBlockBroken();
+  }
 }

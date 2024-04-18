@@ -1,25 +1,6 @@
 package gregtech.api.multitileentity.base;
 
-import java.io.IOException;
-import java.util.List;
-
-import javax.annotation.Nonnull;
-
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.network.Packet;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.util.ChunkCoordinates;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.world.World;
-import net.minecraftforge.common.util.ForgeDirection;
-
 import com.gtnewhorizons.modularui.common.internal.network.NetworkUtils;
-
 import cpw.mods.fml.common.FMLLog;
 import gregtech.api.GregTech_API;
 import gregtech.api.enums.GT_Values;
@@ -48,135 +29,147 @@ import gregtech.common.tools.GT_Tool_SoftHammer;
 import gregtech.common.tools.GT_Tool_Soldering_Iron;
 import gregtech.common.tools.GT_Tool_WireCutter;
 import gregtech.common.tools.GT_Tool_Wrench;
+import java.io.IOException;
+import java.util.List;
+import javax.annotation.Nonnull;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
+import net.minecraft.item.ItemBlock;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.network.Packet;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.ChunkCoordinates;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.World;
+import net.minecraftforge.common.util.ForgeDirection;
 
 public abstract class MultiTileEntity extends TileEntity
     implements MultiTileBasicRender, SyncedMultiTileEntity, IMultiTileEntity {
 
-    // MultTileEntity variables
-    private final boolean isTicking; // If this TileEntity is ticking at all
-    private int metaId = -1; // The MuTE ID of the entity inside the registry
-    private int registryId = -1; // The registry ID of the entity
-    @Nonnull
-    private ForgeDirection facing = ForgeDirection.WEST; // Default to WEST, so it renders facing Left in the
-    @Nonnull
-    private final ChunkCoordinates cachedCoordinates = new ChunkCoordinates();
+  // MultTileEntity variables
+  private final boolean isTicking; // If this TileEntity is ticking at all
+  private int metaId = -1;     // The MuTE ID of the entity inside the registry
+  private int registryId = -1; // The registry ID of the entity
+  @Nonnull
+  private ForgeDirection facing =
+      ForgeDirection.WEST; // Default to WEST, so it renders facing Left in the
+  @Nonnull
+  private final ChunkCoordinates cachedCoordinates = new ChunkCoordinates();
 
-    // MultTileBasicRender variables
-    private ITexture baseTexture = null;
-    private ITexture topOverlayTexture = null;
-    private ITexture bottomOverlayTexture = null;
-    private ITexture leftOverlayTexture = null;
-    private ITexture rightOverlayTexture = null;
-    private ITexture backOverlayTexture = null;
-    private ITexture frontOverlayTexture = null;
+  // MultTileBasicRender variables
+  private ITexture baseTexture = null;
+  private ITexture topOverlayTexture = null;
+  private ITexture bottomOverlayTexture = null;
+  private ITexture leftOverlayTexture = null;
+  private ITexture rightOverlayTexture = null;
+  private ITexture backOverlayTexture = null;
+  private ITexture frontOverlayTexture = null;
 
-    // SyncedMultiTileEntity variables
-    private final GT_Packet_MultiTileEntity fullPacket = new GT_Packet_MultiTileEntity(false);
-    private final GT_Packet_MultiTileEntity timedPacket = new GT_Packet_MultiTileEntity(false);
-    private final GT_Packet_MultiTileEntity graphicPacket = new GT_Packet_MultiTileEntity(false);
+  // SyncedMultiTileEntity variables
+  private final GT_Packet_MultiTileEntity fullPacket =
+      new GT_Packet_MultiTileEntity(false);
+  private final GT_Packet_MultiTileEntity timedPacket =
+      new GT_Packet_MultiTileEntity(false);
+  private final GT_Packet_MultiTileEntity graphicPacket =
+      new GT_Packet_MultiTileEntity(false);
 
-    public MultiTileEntity(boolean isTicking) {
-        this.isTicking = isTicking;
+  public MultiTileEntity(boolean isTicking) { this.isTicking = isTicking; }
+
+  // TileEntity methods
+  @Override
+  public boolean canUpdate() {
+    return isTicking;
+  }
+
+  @Override
+  public Packet getDescriptionPacket() {
+    sendGraphicPacket();
+    return super.getDescriptionPacket();
+  }
+
+  @Override
+  public void readFromNBT(NBTTagCompound nbt) {
+    super.readFromNBT(nbt);
+    if (getMetaId() == -1 || getRegistryId() == -1) {
+      metaId = nbt.getInteger(NBT.MTE_ID);
+      registryId = nbt.getInteger(NBT.MTE_REG);
+      MultiTileEntityRegistry registry =
+          MultiTileEntityRegistry.getRegistry(registryId);
+      MultiTileEntityClassContainer clazz = registry.getClassContainer(metaId);
+      nbt = GT_Util.fuseNBT(nbt, clazz.getParameters());
     }
-
-    // TileEntity methods
-    @Override
-    public boolean canUpdate() {
-        return isTicking;
+    if (nbt.hasKey(NBT.FACING))
+      setFacing(ForgeDirection.getOrientation(nbt.getInteger(NBT.FACING)));
+    if (NetworkUtils.isDedicatedClient()) {
+      if (GregTech_API.sBlockIcons == null && nbt.hasKey(NBT.TEXTURE_FOLDER)) {
+        loadTextures(nbt.getString(NBT.TEXTURE_FOLDER));
+      } else {
+        copyTextures();
+      }
     }
+  }
 
-    @Override
-    public Packet getDescriptionPacket() {
-        sendGraphicPacket();
-        return super.getDescriptionPacket();
-    }
+  @Override
+  public void writeToNBT(NBTTagCompound nbt) {
+    super.writeToNBT(nbt);
+    nbt.setInteger(NBT.FACING, facing.ordinal());
+    nbt.setInteger(NBT.MTE_ID, getMetaId());
+    nbt.setInteger(NBT.MTE_REG, getRegistryId());
+  }
 
-    @Override
-    public void readFromNBT(NBTTagCompound nbt) {
-        super.readFromNBT(nbt);
-        if (getMetaId() == -1 || getRegistryId() == -1) {
-            metaId = nbt.getInteger(NBT.MTE_ID);
-            registryId = nbt.getInteger(NBT.MTE_REG);
-            MultiTileEntityRegistry registry = MultiTileEntityRegistry.getRegistry(registryId);
-            MultiTileEntityClassContainer clazz = registry.getClassContainer(metaId);
-            nbt = GT_Util.fuseNBT(nbt, clazz.getParameters());
-        }
-        if (nbt.hasKey(NBT.FACING)) setFacing(ForgeDirection.getOrientation(nbt.getInteger(NBT.FACING)));
-        if (NetworkUtils.isDedicatedClient()) {
-            if (GregTech_API.sBlockIcons == null && nbt.hasKey(NBT.TEXTURE_FOLDER)) {
-                loadTextures(nbt.getString(NBT.TEXTURE_FOLDER));
-            } else {
-                copyTextures();
-            }
-        }
-    }
+  // MultiTileEntity methods
+  @Override
+  public int getRegistryId() {
+    return registryId;
+  }
 
-    @Override
-    public void writeToNBT(NBTTagCompound nbt) {
-        super.writeToNBT(nbt);
-        nbt.setInteger(NBT.FACING, facing.ordinal());
-        nbt.setInteger(NBT.MTE_ID, getMetaId());
-        nbt.setInteger(NBT.MTE_REG, getRegistryId());
-    }
+  @Override
+  public int getMetaId() {
+    return metaId;
+  }
 
-    // MultiTileEntity methods
-    @Override
-    public int getRegistryId() {
-        return registryId;
-    }
+  @Override
+  @Nonnull
+  public ForgeDirection getFacing() {
+    return facing;
+  }
 
-    @Override
-    public int getMetaId() {
-        return metaId;
-    }
+  @Override
+  public void setFacing(ForgeDirection facing) {
+    this.facing = facing;
+  }
 
-    @Override
-    @Nonnull
-    public ForgeDirection getFacing() {
-        return facing;
-    }
+  protected int getXCoord() { return xCoord; }
 
-    @Override
-    public void setFacing(ForgeDirection facing) {
-        this.facing = facing;
-    }
+  protected int getYCoord() { return yCoord; }
 
-    protected int getXCoord() {
-        return xCoord;
-    }
+  protected int getZCoord() { return zCoord; }
 
-    protected int getYCoord() {
-        return yCoord;
-    }
+  @Nonnull
+  public ChunkCoordinates getCoords() {
+    cachedCoordinates.posX = getXCoord();
+    cachedCoordinates.posY = getYCoord();
+    cachedCoordinates.posZ = getZCoord();
+    return cachedCoordinates;
+  }
 
-    protected int getZCoord() {
-        return zCoord;
-    }
-
-    @Nonnull
-    public ChunkCoordinates getCoords() {
-        cachedCoordinates.posX = getXCoord();
-        cachedCoordinates.posY = getYCoord();
-        cachedCoordinates.posZ = getZCoord();
-        return cachedCoordinates;
-    }
-
-    protected void loadTextures(@Nonnull String folder) {
-        // Loading the registry
-        for (SidedTextureNames textureName : SidedTextureNames.TEXTURES) {
-            ITexture texture;
-            try {
-                Minecraft.getMinecraft()
-                    .getResourceManager()
-                    .getResource(
-                        new ResourceLocation(
-                            Mods.GregTech.ID,
-                            "textures/blocks/multitileentity/" + folder + "/" + textureName.getName() + ".png"));
-                texture = TextureFactory.of(new CustomIcon("multitileentity/" + folder + "/" + textureName.getName()));
-            } catch (IOException ignored) {
-                texture = TextureFactory.of(Textures.BlockIcons.VOID);
-            }
-            switch (textureName) {
+  protected void loadTextures(@Nonnull String folder) {
+    // Loading the registry
+    for (SidedTextureNames textureName : SidedTextureNames.TEXTURES) {
+      ITexture texture;
+      try {
+        Minecraft.getMinecraft().getResourceManager().getResource(
+            new ResourceLocation(Mods.GregTech.ID,
+                                 "textures/blocks/multitileentity/" + folder +
+                                     "/" + textureName.getName() + ".png"));
+        texture = TextureFactory.of(new CustomIcon(
+            "multitileentity/" + folder + "/" + textureName.getName()));
+      } catch (IOException ignored) {
+        texture = TextureFactory.of(Textures.BlockIcons.VOID);
+      }
+      switch (textureName) {
                 case Top -> topOverlayTexture = texture;
                 case Bottom -> bottomOverlayTexture = texture;
                 case Back -> backOverlayTexture = texture;

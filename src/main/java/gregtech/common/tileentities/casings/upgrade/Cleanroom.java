@@ -5,22 +5,22 @@ import gregtech.api.multitileentity.multiblock.casing.UpgradeCasing;
 
 public class Cleanroom extends UpgradeCasing {
 
-    @Override
-    public String getTileEntityName() {
-        return "gt.multitileentity.multiblock.functional.cleanroom";
-    }
+  @Override
+  public String getTileEntityName() {
+    return "gt.multitileentity.multiblock.functional.cleanroom";
+  }
 
-    @Override
-    protected void customWork(IMultiBlockController target) {
-        target.setCleanroom(true);
-    }
+  @Override
+  protected void customWork(IMultiBlockController target) {
+    target.setCleanroom(true);
+  }
 
-    @Override
-    public void onBlockBroken() {
-        final IMultiBlockController controller = getTarget(false);
-        if (controller != null) {
-            controller.setCleanroom(false);
-        }
-        super.onBlockBroken();
+  @Override
+  public void onBlockBroken() {
+    final IMultiBlockController controller = getTarget(false);
+    if (controller != null) {
+      controller.setCleanroom(false);
     }
+    super.onBlockBroken();
+  }
 }

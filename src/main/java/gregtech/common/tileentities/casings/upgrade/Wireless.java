@@ -5,22 +5,22 @@ import gregtech.api.multitileentity.multiblock.casing.UpgradeCasing;
 
 public class Wireless extends UpgradeCasing {
 
-    @Override
-    public String getTileEntityName() {
-        return "gt.multitileentity.multiblock.functional.wireless";
-    }
+  @Override
+  public String getTileEntityName() {
+    return "gt.multitileentity.multiblock.functional.wireless";
+  }
 
-    @Override
-    protected void customWork(IMultiBlockController target) {
-        target.setWirelessSupport(true);
-    }
+  @Override
+  protected void customWork(IMultiBlockController target) {
+    target.setWirelessSupport(true);
+  }
 
-    @Override
-    public void onBlockBroken() {
-        final IMultiBlockController controller = getTarget(false);
-        if (controller != null) {
-            controller.setWirelessSupport(false);
-        }
-        super.onBlockBroken();
+  @Override
+  public void onBlockBroken() {
+    final IMultiBlockController controller = getTarget(false);
+    if (controller != null) {
+      controller.setWirelessSupport(false);
     }
+    super.onBlockBroken();
+  }
 }
