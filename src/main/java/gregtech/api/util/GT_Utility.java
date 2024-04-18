@@ -2135,8 +2135,8 @@ public class GT_Utility {
         ItemStack[] tStack = GT_OreDictUnificator.getStackArray(true, aOutput);
         if (tStack.length > 0 && areStacksEqual(aInput, tStack[0])) return false;
         if (tOreName != null) {
-            if (tOreName.toString()
-                .equals("dustAsh")
+            if ("dustAsh"
+                .equals(tOreName.toString())
                 && tStack[0].getUnlocalizedName()
                     .equals("tile.volcanicAsh"))
                 return false;
