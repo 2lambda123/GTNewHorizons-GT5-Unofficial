@@ -183,19 +183,19 @@ public class GT_RecipeRegistrator {
             || GT_Utility.getFluidForFilledItem(aStack, false) != null
             || aData.mMaterial.mMaterial.mSubTags.contains(SubTag.NO_RECIPES)) return;
         registerReverseMacerating(GT_Utility.copyAmount(1, aStack), aData, aData.mPrefix == null);
-        registerReverseSmelting(
-            GT_Utility.copyAmount(1, aStack),
-            aData.mMaterial.mMaterial,
-            aData.mMaterial.mAmount,
-            true);
         if (!GT_Utility.areStacksEqual(GT_ModHandler.getIC2Item("iridiumOre", 1L), aStack)) {
+            registerReverseSmelting(
+                GT_Utility.copyAmount(1, aStack),
+                aData.mMaterial.mMaterial,
+                aData.mMaterial.mAmount,
+                true);
             registerReverseFluidSmelting(
                 GT_Utility.copyAmount(1, aStack),
                 aData.mMaterial.mMaterial,
                 aData.mMaterial.mAmount,
                 aData.getByProduct(0));
+            registerReverseArcSmelting(GT_Utility.copyAmount(1, aStack), aData);
         }
-        registerReverseArcSmelting(GT_Utility.copyAmount(1, aStack), aData);
     }
 
     /**
