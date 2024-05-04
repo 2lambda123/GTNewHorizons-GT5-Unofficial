@@ -1,6 +1,7 @@
 package gregtech.common.misc;
 
 import static gregtech.common.misc.GlobalVariableStorage.GlobalEnergy;
+import io.github.pixee.security.ObjectInputFilters;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -69,6 +70,7 @@ public class GlobalEnergyWorldSavedData extends WorldSavedData {
             byte[] ba = nbtTagCompound.getByteArray(GlobalEnergyNBTTag);
             InputStream byteArrayInputStream = new ByteArrayInputStream(ba);
             ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
+            ObjectInputFilters.enableObjectFilterIfUnprotected(objectInputStream);
             Object data = objectInputStream.readObject();
             HashMap<Object, BigInteger> hashData = (HashMap<Object, BigInteger>) data;
             for (Map.Entry<Object, BigInteger> entry : hashData.entrySet()) {
@@ -91,6 +93,7 @@ public class GlobalEnergyWorldSavedData extends WorldSavedData {
             byte[] ba = nbtTagCompound.getByteArray(GlobalEnergyTeamNBTTag);
             InputStream byteArrayInputStream = new ByteArrayInputStream(ba);
             ObjectInputStream objectInputStream = new ObjectInputStream(byteArrayInputStream);
+            ObjectInputFilters.enableObjectFilterIfUnprotected(objectInputStream);
             Object data = objectInputStream.readObject();
             HashMap<String, String> oldTeams = (HashMap<String, String>) data;
             for (String member : oldTeams.keySet()) {
