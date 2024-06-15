@@ -38,7 +38,7 @@ public class ProcessingCell implements IOreRecipeRegistrator {
             case cell -> {
                 if (aMaterial == Materials.Empty) {
                     GT_ModHandler.removeRecipeByOutputDelayed(aStack);
-                    if (aModName.equalsIgnoreCase("AtomicScience")) {
+                    if ("AtomicScience".equalsIgnoreCase(aModName)) {
                         GT_ModHandler.addExtractionRecipe(ItemList.Cell_Empty.get(1L), aStack);
                     }
                 } else {

@@ -16,8 +16,8 @@ public class ProcessingItem implements gregtech.api.interfaces.IOreRecipeRegistr
     @Override
     public void registerOre(OrePrefixes aPrefix, Materials aMaterial, String aOreDictName, String aModName,
         ItemStack aStack) {
-        if (GT_OreDictUnificator.getItemData(aStack) == null && !aOreDictName.equals("itemCertusQuartz")
-            && !aOreDictName.equals("itemNetherQuartz")) {
+        if (GT_OreDictUnificator.getItemData(aStack) == null && !"itemCertusQuartz".equals(aOreDictName)
+            && !"itemNetherQuartz".equals(aOreDictName)) {
             switch (aOreDictName) {
                 case "itemSilicon":
                     GT_OreDictUnificator.addItemData(aStack, new ItemData(Materials.Silicon, 3628800L));

@@ -307,7 +307,7 @@ public class GT_NEI_DefaultHandler extends TemplateRecipeHandler {
 
     @Override
     public IUsageHandler getUsageAndCatalystHandler(String inputId, Object... ingredients) {
-        if (inputId.equals("item")) {
+        if ("item".equals(inputId)) {
             ItemStack candidate = (ItemStack) ingredients[0];
             GT_NEI_DefaultHandler handler = (GT_NEI_DefaultHandler) newInstance();
             if (RecipeCatalysts.containsCatalyst(handler, candidate)) {

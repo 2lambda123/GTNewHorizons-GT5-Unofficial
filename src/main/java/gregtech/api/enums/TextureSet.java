@@ -81,7 +81,7 @@ public class TextureSet {
                 // Check nanites folder for nanites texture to avoid copy pasting large file multiple times.
                 // Exemption for CUSTOM textures so they can be overriden as normal by placing nanite image in
                 // their respective folder.
-                if (SUFFIXES[i].equals("/nanites") && (!aSetName.contains("CUSTOM"))) {
+                if ("/nanites".equals(SUFFIXES[i]) && (!aSetName.contains("CUSTOM"))) {
                     mTextures[i] = new Textures.ItemIcons.CustomIcon(aTextMatIconDir + "NANITES" + SUFFIXES[i]);
                 } else {
                     mTextures[i] = new Textures.ItemIcons.CustomIcon(aTextMatIconDir + aSetName + SUFFIXES[i]);

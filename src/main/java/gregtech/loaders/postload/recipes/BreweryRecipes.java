@@ -533,10 +533,10 @@ public class BreweryRecipes implements Runnable {
             .addTo(brewingRecipes);
 
         // strong
-        if (aName.equals("regen") || aName.equals("speed")
-            || aName.equals("health")
-            || aName.equals("strength")
-            || aName.equals("poison")) {
+        if ("regen".equals(aName) || "speed".equals(aName)
+            || "health".equals(aName)
+            || "strength".equals(aName)
+            || "poison".equals(aName)) {
             GT_Values.RA.stdBuilder()
                 .itemInputs(aItem)
                 .fluidInputs(getFluidStack("potion.thick", 750))
@@ -547,7 +547,7 @@ public class BreweryRecipes implements Runnable {
         }
 
         // long
-        if (!aName.equals("health")) {
+        if (!"health".equals(aName)) {
             GT_Values.RA.stdBuilder()
                 .itemInputs(GT_OreDictUnificator.get(OrePrefixes.dust, Materials.Redstone, 1L))
                 .fluidInputs(getFluidStack("potion." + aName, 750))

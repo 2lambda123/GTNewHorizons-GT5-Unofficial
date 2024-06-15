@@ -116,7 +116,7 @@ public class GT_ChunkManager
             ForgeChunkManager.forceChunk(instance.registeredTickets.get(owner), chunkXZ);
         } else {
             Ticket ticket;
-            if (player.equals("")) ticket = ForgeChunkManager
+            if ("".equals(player)) ticket = ForgeChunkManager
                 .requestTicket(GT_Mod.instance, owner.getWorldObj(), ForgeChunkManager.Type.NORMAL);
             else ticket = ForgeChunkManager
                 .requestPlayerTicket(GT_Mod.instance, player, owner.getWorldObj(), ForgeChunkManager.Type.NORMAL);

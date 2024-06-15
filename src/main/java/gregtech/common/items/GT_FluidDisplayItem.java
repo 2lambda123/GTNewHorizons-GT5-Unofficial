@@ -122,7 +122,7 @@ public class GT_FluidDisplayItem extends GT_Generic_Item {
                 if (isCell(tContainer)) {
                     Materials tMaterial = getMaterialFromCell(tContainer);
                     if (!tMaterial.equals(Materials._NULL)) {
-                        if (tMaterial.mChemicalFormula.equals("?")) {
+                        if ("?".equals(tMaterial.mChemicalFormula)) {
                             return "";
                         } else {
                             return tMaterial.mChemicalFormula;

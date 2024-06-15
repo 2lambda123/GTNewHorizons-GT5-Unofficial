@@ -2511,7 +2511,7 @@ public class Materials implements IColorModulationContainer, ISubTagContainer {
             .get(aConfigPath, "Transparent", aMaterial.mTransparent);
         String aColor = GregTech_API.sMaterialProperties
             .get(aConfigPath, "DyeColor", aMaterial.mColor == Dyes._NULL ? "None" : aMaterial.mColor.toString());
-        aMaterial.mColor = aColor.equals("None") ? Dyes._NULL : Dyes.get(aColor);
+        aMaterial.mColor = "None".equals(aColor) ? Dyes._NULL : Dyes.get(aColor);
         String[] aRGBA = GregTech_API.sMaterialProperties.get(
             aConfigPath,
             "MatRGBA",

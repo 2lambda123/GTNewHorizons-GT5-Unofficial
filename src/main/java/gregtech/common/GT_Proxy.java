@@ -2121,19 +2121,19 @@ public abstract class GT_Proxy implements IGT_Mod, IGuiHandler, IFuelHandler {
                     case stoneSmooth -> GT_OreDictUnificator.registerOre("stone", aEvent.Ore);
                     case stoneCobble -> GT_OreDictUnificator.registerOre("cobblestone", aEvent.Ore);
                     case plank -> {
-                        if (tName.equals("Wood")) {
+                        if ("Wood".equals(tName)) {
                             GT_OreDictUnificator.addItemData(aEvent.Ore, new ItemData(Materials.Wood, 3628800L));
                         }
                     }
                     case slab -> {
-                        if (tName.equals("Wood")) {
+                        if ("Wood".equals(tName)) {
                             GT_OreDictUnificator.addItemData(aEvent.Ore, new ItemData(Materials.Wood, 1814400L));
                         }
                     }
                     case sheet -> {
-                        if (tName.equals("Plastic")) {
+                        if ("Plastic".equals(tName)) {
                             GT_OreDictUnificator.registerOre(OrePrefixes.plate, Materials.Plastic, aEvent.Ore);
-                        } else if (tName.equals("Rubber")) {
+                        } else if ("Rubber".equals(tName)) {
                             GT_OreDictUnificator.registerOre(OrePrefixes.plate, Materials.Rubber, aEvent.Ore);
                         }
                     }
@@ -2146,12 +2146,12 @@ public abstract class GT_Proxy implements IGT_Mod, IGuiHandler, IFuelHandler {
                         }
                     }
                     case wood -> {
-                        if (tName.equals("Rubber")) {
+                        if ("Rubber".equals(tName)) {
                             GT_OreDictUnificator.registerOre("logRubber", aEvent.Ore);
                         }
                     }
                     case food -> {
-                        if (tName.equals("Cocoapowder")) {
+                        if ("Cocoapowder".equals(tName)) {
                             GT_OreDictUnificator.registerOre(OrePrefixes.dust, Materials.Cocoa, aEvent.Ore);
                         }
                     }

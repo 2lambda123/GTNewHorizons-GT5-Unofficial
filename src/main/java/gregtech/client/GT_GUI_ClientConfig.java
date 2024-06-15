@@ -49,7 +49,7 @@ public class GT_GUI_ClientConfig extends GuiConfig {
                 String name = entry.getKey();
                 int defaultStart = name.lastIndexOf('_');
                 String realName = defaultStart >= 0 ? name.substring(0, defaultStart) : name;
-                if (categoryName.equals("nei.recipe_categories")) {
+                if ("nei.recipe_categories".equals(categoryName)) {
                     // reuse existing translation for RecipeCategory
                     entry.getValue()
                         .setLanguageKey(name);

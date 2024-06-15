@@ -109,7 +109,7 @@ public class GT_Worldgen_GT_Ore_Layer extends GT_Worldgen {
     @Override
     public int executeWorldgenChunkified(World aWorld, Random aRandom, String aBiome, int aDimensionType, int aChunkX,
         int aChunkZ, int aSeedX, int aSeedZ, IChunkProvider aChunkGenerator, IChunkProvider aChunkProvider) {
-        if (mWorldGenName.equals("NoOresInVein")) {
+        if ("NoOresInVein".equals(mWorldGenName)) {
             if (debugOrevein) GT_Log.out.println(" NoOresInVein");
             // Return a special empty orevein
             return ORE_PLACED;
@@ -124,12 +124,12 @@ public class GT_Worldgen_GT_Ore_Layer extends GT_Worldgen {
             return WRONG_DIMENSION;
         }
 
-        if (!this.mRestrictBiome.equals("None") && !(this.mRestrictBiome.equals(aBiome))) {
+        if (!"None".equals(this.mRestrictBiome) && !(this.mRestrictBiome.equals(aBiome))) {
             return WRONG_BIOME;
         }
         // For optimal performance, this should be done upstream. Meh
         String tDimensionName = aWorld.provider.getDimensionName();
-        boolean isUnderdark = tDimensionName.equals("Underdark");
+        boolean isUnderdark = "Underdark".equals(tDimensionName);
 
         int[] placeCount = new int[4];
 

@@ -22,7 +22,7 @@ public class ProcessingSand implements gregtech.api.interfaces.IOreRecipeRegistr
     @Override
     public void registerOre(OrePrefixes aPrefix, Materials aMaterial, String aOreDictName, String aModName,
         ItemStack aStack) {
-        if (aOreDictName.equals("sandOil")) {
+        if ("sandOil".equals(aOreDictName)) {
             GT_Values.RA.stdBuilder()
                 .itemInputs(GT_Utility.copyAmount(2, aStack), ItemList.Cell_Empty.get(1))
                 .itemOutputs(

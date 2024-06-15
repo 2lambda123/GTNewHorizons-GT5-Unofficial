@@ -1150,11 +1150,11 @@ public enum OrePrefixes {
 
     public static OrePrefixes getOrePrefix(String aOre) {
         for (OrePrefixes tPrefix : values()) if (aOre.startsWith(tPrefix.toString())) {
-            if (tPrefix == oreNether && aOre.equals("oreNetherQuartz")) return ore;
-            if (tPrefix == oreNether && aOre.equals("oreNetherStar")) return ore;
-            if (tPrefix == oreBasalt && aOre.equals("oreBasalticMineralSand")) return ore;
-            if (tPrefix == stickLong && aOre.equals("stickLongasssuperconductornameforuvwire")) return stick;
-            if (tPrefix == stickLong && aOre.equals("stickLongasssuperconductornameforuhvwire")) return stick;
+            if (tPrefix == oreNether && "oreNetherQuartz".equals(aOre)) return ore;
+            if (tPrefix == oreNether && "oreNetherStar".equals(aOre)) return ore;
+            if (tPrefix == oreBasalt && "oreBasalticMineralSand".equals(aOre)) return ore;
+            if (tPrefix == stickLong && "stickLongasssuperconductornameforuvwire".equals(aOre)) return stick;
+            if (tPrefix == stickLong && "stickLongasssuperconductornameforuhvwire".equals(aOre)) return stick;
             return tPrefix;
         }
         return null;

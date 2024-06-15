@@ -136,28 +136,28 @@ public class GT_MetaTileEntity_PotionBrewer extends GT_MetaTileEntity_BasicMachi
                     tInputName = tInputName.replaceFirst("." + tModifier, "");
                 }
                 if (GT_Utility.areStacksEqual(new ItemStack(Items.fermented_spider_eye, 1, 0), getInputAt(0))) {
-                    if (tInputName.equals("poison")) {
+                    if ("poison".equals(tInputName)) {
                         return setOutput("potion.damage" + tModifier);
                     }
-                    if (tInputName.equals("health")) {
+                    if ("health".equals(tInputName)) {
                         return setOutput("potion.damage" + tModifier);
                     }
-                    if (tInputName.equals("waterbreathing")) {
+                    if ("waterbreathing".equals(tInputName)) {
                         return setOutput("potion.damage" + tModifier);
                     }
-                    if (tInputName.equals("nightvision")) {
+                    if ("nightvision".equals(tInputName)) {
                         return setOutput("potion.invisibility" + tModifier);
                     }
-                    if (tInputName.equals("fireresistance")) {
+                    if ("fireresistance".equals(tInputName)) {
                         return setOutput("potion.slowness" + tModifier);
                     }
-                    if (tInputName.equals("speed")) {
+                    if ("speed".equals(tInputName)) {
                         return setOutput("potion.slowness" + tModifier);
                     }
-                    if (tInputName.equals("strength")) {
+                    if ("strength".equals(tInputName)) {
                         return setOutput("potion.weakness" + tModifier);
                     }
-                    if (tInputName.equals("regen")) {
+                    if ("regen".equals(tInputName)) {
                         return setOutput("potion.poison" + tModifier);
                     }
                     return setOutput("potion.weakness");

@@ -102,7 +102,7 @@ public class GT_PreLoad {
                 .getCurrentLanguage()
                 .getLanguageCode();
             GT_FML_LOGGER.info("User lang is " + userLang);
-            if (userLang.equals("en_US")) {
+            if ("en_US".equals(userLang)) {
                 GT_FML_LOGGER.info("Loading GregTech.lang");
                 GT_LanguageManager.isEN_US = true;
                 GT_LanguageManager.sEnglishFile = new Configuration(new File(languageDir, "GregTech.lang"));

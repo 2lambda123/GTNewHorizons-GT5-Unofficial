@@ -104,7 +104,7 @@ public class GT_Tool_Crowbar extends GT_Tool {
             }
             return true;
         }
-        return tTool.equals("crowbar");
+        return "crowbar".equals(tTool);
     }
 
     @Override
