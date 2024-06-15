@@ -21,7 +21,7 @@ public class ProcessingBeans implements gregtech.api.interfaces.IOreRecipeRegist
     public void registerOre(OrePrefixes aPrefix, Materials aMaterial, String aOreDictName, String aModName,
         ItemStack aStack) {
 
-        if (!aOreDictName.equals("beansCocoa")) {
+        if (!"beansCocoa".equals(aOreDictName)) {
             return;
         }
 

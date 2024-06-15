@@ -179,7 +179,7 @@ public class GT_Item_Machines extends ItemBlock implements IFluidContainerItem {
                 if (aList != null) aList.add(tTranslated);
             } else {
                 String tTranslated = GT_LanguageManager.addStringLocalization(tKey, tDescLine);
-                if (aList != null) aList.add(tTranslated.equals("") ? tDescLine : tTranslated);
+                if (aList != null) aList.add("".equals(tTranslated) ? tDescLine : tTranslated);
             }
         }
     }

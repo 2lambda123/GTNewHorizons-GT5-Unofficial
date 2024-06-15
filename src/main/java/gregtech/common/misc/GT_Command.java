@@ -123,7 +123,7 @@ public final class GT_Command extends CommandBase {
                     "global_energy_display")
                 .filter(s -> test.isEmpty() || s.startsWith(test))
                 .forEach(l::add);
-        } else if (test.equals("toggle")) {
+        } else if ("toggle".equals(test)) {
             String test1 = ss[1].trim();
             Stream
                 .of(

@@ -686,8 +686,8 @@ public class GT_Client extends GT_Proxy implements Runnable {
                 FluidRecipe.addRecipeMap(
                     category.unlocalizedName,
                     new GregTech5RecipeExtractor(
-                        category.unlocalizedName.equals("gt.recipe.scanner")
-                            || category.unlocalizedName.equals("gt.recipe.fakeAssemblylineProcess")));
+                        "gt.recipe.scanner".equals(category.unlocalizedName)
+                            || "gt.recipe.fakeAssemblylineProcess".equals(category.unlocalizedName)));
             }
         }
     }

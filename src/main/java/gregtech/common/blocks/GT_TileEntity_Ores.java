@@ -91,19 +91,19 @@ public class GT_TileEntity_Ores extends TileEntity implements ITexturedTileEntit
                 } else {
                     aMetaData += 5000;
                 }
-            } else if (BlockName.equals("tile.igneousStone")) {
+            } else if ("tile.igneousStone".equals(BlockName)) {
                 if (GregTech_API.sBlockOresUb1 != null) {
                     tOreBlock = GregTech_API.sBlockOresUb1;
                     aMetaData += (BlockMeta * 1000);
                     // GT_FML_LOGGER.info("Block changed to UB1");
                 }
-            } else if (BlockName.equals("tile.metamorphicStone")) {
+            } else if ("tile.metamorphicStone".equals(BlockName)) {
                 if (GregTech_API.sBlockOresUb2 != null) {
                     tOreBlock = GregTech_API.sBlockOresUb2;
                     aMetaData += (BlockMeta * 1000);
                     // GT_FML_LOGGER.info("Block changed to UB2");
                 }
-            } else if (BlockName.equals("tile.sedimentaryStone")) {
+            } else if ("tile.sedimentaryStone".equals(BlockName)) {
                 if (GregTech_API.sBlockOresUb3 != null) {
                     tOreBlock = GregTech_API.sBlockOresUb3;
                     aMetaData += (BlockMeta * 1000);

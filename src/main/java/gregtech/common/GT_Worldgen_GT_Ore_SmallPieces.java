@@ -69,7 +69,7 @@ public class GT_Worldgen_GT_Ore_SmallPieces extends GT_Worldgen {
     @Override
     public boolean executeWorldgen(World aWorld, Random aRandom, String aBiome, int aDimensionType, int aChunkX,
         int aChunkZ, IChunkProvider aChunkGenerator, IChunkProvider aChunkProvider) {
-        if (!this.mBiome.equals("None") && !(this.mBiome.equals(aBiome))) {
+        if (!"None".equals(this.mBiome) && !(this.mBiome.equals(aBiome))) {
             return false; // Not the correct biome for ore mix
         }
         if (!isGenerationAllowed(
@@ -82,7 +82,7 @@ public class GT_Worldgen_GT_Ore_SmallPieces extends GT_Worldgen {
         int count = 0;
         // For optimal performance, this should be done upstream. Meh
         String tDimensionName = aWorld.provider.getDimensionName();
-        boolean isUnderdark = tDimensionName.equals("Underdark");
+        boolean isUnderdark = "Underdark".equals(tDimensionName);
 
         if (this.mMeta > 0) {
             int j = Math.max(1, this.mAmount / 2 + aRandom.nextInt(this.mAmount) / 2);
